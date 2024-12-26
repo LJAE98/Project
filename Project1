@@ -16,7 +16,7 @@ int main()
     cout << "3 : ";
     cin >> a[2];
 
-    cout << "4 : ":
+    cout << "4 : ";
     cin >> a[3];
 
     cout << "5 : ";
