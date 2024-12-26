@@ -25,8 +25,8 @@ int main()
     double tot = a[0] + a[1] + a[2] + a[3] + a[4];
     double avg = tot / 5;
 
-    cout << "ÃÑÁ¡ : " << tot << endl;
-    cout << "Æò±Õ : " << avg << endl;
+    cout << "ì´ì ê°’ : " << tot << endl;
+    cout << "í‰ê· ê°’: " << avg << endl;
 
     return 0;
 }
