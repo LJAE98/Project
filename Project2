@@ -1,0 +1,49 @@
+#include <iostream>
+using namespace std;
+
+class Animal {
+public:
+    virtual void speak() {
+        cout << "Animal speaks" << endl;
+    }
+};
+
+class Dog : public Animal {
+public:
+    void speak() override {
+        cout << "Dog woof" << endl;
+    }
+};
+
+class Cat : public Animal {
+public:
+    void speak() override {
+        cout << "Cat meow" << endl;
+    }
+};
+
+class Cow : public Animal {
+public:
+    void speak() override {
+        cout << "Cow moo" << endl;
+    }
+};
+
+int main() {
+    Animal* animal;
+
+    Dog dog;
+    Cat cat;
+    Cow cow;
+
+    animal = &dog;
+    animal->speak(); // Dog barks
+
+    animal = &cat;
+    animal->speak(); // Cat meows
+
+    animal = &cow;
+    animal->speak(); // Cow meows
+
+    return 0;
+}
