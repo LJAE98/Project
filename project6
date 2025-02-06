@@ -1,0 +1,164 @@
+//ActorMove.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "ActorMove.generated.h"
+
+UCLASS()
+class PROJECT_API AActorMove : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	AActorMove();
+
+protected:
+    USceneComponent* SceneRoot;
+	UStaticMeshComponent* StaticMeshComp;
+
+    virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+protected:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    FVector StartLocation;       
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    FVector EndLocation; 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    FVector CurrentLocation;   
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    bool bMovingForward;         
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    float MoveSpeed = 100.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Move")
+    float MaxRange = 500.f; 
+
+};
+
+//ActorMove.cpp
+#include "ActorMove.h"
+
+AActorMove::AActorMove()
+{
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	SetRootComponent(SceneRoot);
+
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMeshComp->SetupAttachment(SceneRoot);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Resources/Shapes/Shape_Cube.Shape_Cube"));
+	if (MeshAsset.Succeeded())
+	{
+		StaticMeshComp->SetStaticMesh(MeshAsset.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT("/Game/Resources/Materials/M_Tech_Hex_Tile_Pulse.M_Tech_Hex_Tile_Pulse"));
+	if (MaterialAsset.Succeeded())
+	{
+		StaticMeshComp->SetMaterial(0, MaterialAsset.Object);
+	}
+
+	PrimaryActorTick.bCanEverTick = true;
+
+}
+
+void AActorMove::BeginPlay()
+{
+    Super::BeginPlay();
+
+    StartLocation = GetActorLocation();
+    EndLocation = StartLocation + FVector(MaxRange, 0.f, 0.f);
+    CurrentLocation = StartLocation;
+    bMovingForward = true;
+}
+
+void AActorMove::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    if (bMovingForward)
+    {
+        CurrentLocation += FVector(MoveSpeed * DeltaTime, 0.f, 0.f);
+    }
+    else
+    {
+        CurrentLocation -= FVector(MoveSpeed * DeltaTime, 0.f, 0.f);
+    }
+
+    if (FVector::Dist(CurrentLocation, StartLocation) >= MaxRange)
+    {
+        bMovingForward = !bMovingForward;
+    }
+
+    SetActorLocation(CurrentLocation);
+}
+
+//ActorRotation.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "ActorRotation.generated.h"
+
+UCLASS()
+class PROJECT_API AActorRotation : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	AActorRotation();
+
+protected:
+	USceneComponent* SceneRoot;
+	UStaticMeshComponent* StaticMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rotation")
+	float RotationSpeed;
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+};
+
+//ActorRotation.cpp
+#include "ActorRotation.h"
+
+AActorRotation::AActorRotation()
+{
+	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SceneRoot"));
+	SetRootComponent(SceneRoot);
+
+	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
+	StaticMeshComp->SetupAttachment(SceneRoot);
+
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MeshAsset(TEXT("/Game/Resources/Shapes/Shape_Tube.Shape_Tube"));
+	if (MeshAsset.Succeeded())
+	{
+		StaticMeshComp->SetStaticMesh(MeshAsset.Object);
+	}
+
+	static ConstructorHelpers::FObjectFinder<UMaterial> MaterialAsset(TEXT("/Game/Resources/Materials/M_Tech_Hex_Tile_Pulse.M_Tech_Hex_Tile_Pulse"));
+	if (MaterialAsset.Succeeded())
+	{
+		StaticMeshComp->SetMaterial(0, MaterialAsset.Object);
+	}
+
+	PrimaryActorTick.bCanEverTick = true;
+	RotationSpeed = 90.0f;
+}
+
+void AActorRotation::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AActorRotation::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (!FMath::IsNearlyZero(RotationSpeed))
+	{
+		AddActorLocalRotation(FRotator(0.0f, RotationSpeed * DeltaTime, 0.0f));
+	}
+}
