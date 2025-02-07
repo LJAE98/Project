@@ -1,0 +1,69 @@
+//MyPlayerController.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerController.h"
+#include "MyPawn.h"
+#include "MyPlayerController.generated.h"
+
+UCLASS()
+class SEVENPROJECT_API AMyPlayerController : public APlayerController
+{
+	GENERATED_BODY()
+
+public:
+	AMyPlayerController();
+
+protected:
+	virtual void SetupInputComponent() override;
+
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void Look(float Value);
+
+	virtual void BeginPlay() override;
+
+	AMyPawn* MyPawn;
+};
+
+//MyPlayerController.cpp
+#include "MyPlayerController.h"
+#include "MyPawn.h"
+#include "GameFramework/Actor.h"
+
+AMyPlayerController::AMyPlayerController()
+{
+	bEnableMouseOverEvents = true;
+	bEnableClickEvents = true;
+}
+
+void AMyPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MyPawn = Cast<AMyPawn>(GetPawn());
+}
+
+void AMyPlayerController::SetupInputComponent()
+{
+	Super::SetupInputComponent();
+
+	InputComponent->BindAxis("MoveForward", this, &AMyPlayerController::MoveForward);
+	InputComponent->BindAxis("MoveRight", this, &AMyPlayerController::MoveRight);
+}
+
+void AMyPlayerController::MoveForward(float Value)
+{
+	if (MyPawn)
+	{
+		MyPawn->MoveForward(Value);
+	}
+}
+
+void AMyPlayerController::MoveRight(float Value)
+{
+	if (MyPawn)
+	{
+		MyPawn->MoveRight(Value);
+	}
+}

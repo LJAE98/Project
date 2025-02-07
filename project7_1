@@ -1,0 +1,25 @@
+// GameMode.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/GameModeBase.h"
+#include "SpartaGameMode.generated.h"
+
+UCLASS()
+class SEVENPROJECT_API ASpartaGameMode : public AGameModeBase
+{
+	GENERATED_BODY()
+
+public:
+	ASpartaGameMode();
+};
+
+// GameMode.cpp
+#include "SpartaGameMode.h"
+#include "MyPawn.h"
+
+ASpartaGameMode::ASpartaGameMode()
+{
+	DefaultPawnClass = AMyPawn::StaticClass();
+}
+

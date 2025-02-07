@@ -1,0 +1,108 @@
+//MyPawn.h
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Pawn.h"
+#include "MyPawn.generated.h"
+
+class UCapsuleComponent;
+class USkeletalMeshComponent;
+class USpringArmComponent;
+class UCameraComponent;
+
+UCLASS()
+class SEVENPROJECT_API AMyPawn : public APawn
+{
+	GENERATED_BODY()
+
+public:
+	AMyPawn();
+
+	void MoveForward(float Value);
+	void MoveRight(float Value);
+	void Turn(float Value);
+	void LookUp(float Value);
+
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCapsuleComponent* CapsuleComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USkeletalMeshComponent* SkeletalMeshComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USpringArmComponent* SpringArmComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UCameraComponent* CameraComponent;
+	
+
+	virtual void BeginPlay() override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+};
+
+//MyPawn.cpp
+#include "MyPawn.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+
+AMyPawn::AMyPawn()
+{
+
+	PrimaryActorTick.bCanEverTick = false;
+	
+	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
+	RootComponent = CapsuleComponent;
+
+	
+	SkeletalMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
+	SkeletalMeshComponent->SetupAttachment(RootComponent);
+
+	
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArmComponent"));
+	SpringArmComponent->SetupAttachment(RootComponent);
+
+
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
+	CameraComponent->SetupAttachment(SpringArmComponent);
+}
+
+void AMyPawn::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AMyPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	PlayerInputComponent->BindAxis("MoveForward", this, &AMyPawn::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AMyPawn::MoveRight);
+	PlayerInputComponent->BindAxis("Turn", this, &AMyPawn::Turn);
+	PlayerInputComponent->BindAxis("LookUp", this, &AMyPawn::LookUp);
+}
+
+void AMyPawn::MoveForward(float Value)
+{
+	if (Value != 0.0f)
+	{
+		AddActorLocalOffset(FVector(Value * 100.0f, 0.0f, 0.0f), true);
+	}
+}
+
+void AMyPawn::MoveRight(float Value)
+{
+	if (Value != 0.0f)
+	{
+		AddActorLocalOffset(FVector(0.0f, Value * 100.0f, 0.0f), true);
+	}
+}
+
+void AMyPawn::Turn(float Value)
+{
+	AddActorLocalRotation(FRotator(0.0f, Value * 2.0f, 0.0f));
+}
+
+void AMyPawn::LookUp(float Value)
+{
+	AddActorLocalRotation(FRotator(Value * 2.0f, 0.0f, 0.0f));
+}
